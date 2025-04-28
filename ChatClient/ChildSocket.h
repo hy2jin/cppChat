@@ -1,13 +1,13 @@
 #pragma once
 
-// CClientSocket 명령 대상입니다.
+// CChildSocket 명령 대상입니다.
 class CChatClientDlg;
 
-class CClientSocket : public CAsyncSocket
+class CChildSocket : public CAsyncSocket
 {
 public:
-	CClientSocket();
-	virtual ~CClientSocket();
+	CChildSocket();
+	virtual ~CChildSocket();
 	virtual void OnReceive(int nErrorCode);
 
 	CChatClientDlg* m_pDlg;

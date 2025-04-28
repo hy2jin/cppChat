@@ -5,6 +5,8 @@
 #pragma once
 #include "afxwin.h"
 #include "ClientSocket.h"
+#include "ServerSocket.h"
+#include "ChildSocket.h"
 
 
 // CChatClientDlg 대화 상자
@@ -32,17 +34,31 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 public:
-	CListBox m_ChatList;
-	CEdit m_ChatInput;
-	afx_msg void OnBnClickedButton1();
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	CListBox m_ChatList;	// 채팅 보이는 리스트
+	CEdit m_ChatInput;		// 채팅 입력창
 
-	void AddStrToList();
-	afx_msg void OnBnClickedOk();
-	afx_msg void OnLbnSelchangeList1();
+	afx_msg void OnBnClickedButton1();				// 보내기 버튼 클릭
+	virtual BOOL PreTranslateMessage(MSG* pMsg);	// 엔터키 변경
 
-	CClientSocket m_client;
-	CEdit m_IP;
-	CEdit m_port;
-	afx_msg void OnBnClickedButtonConnect();
+	void AddStrToList(CString msg);					// 실제 리스트에 추가하는 함수
+	void SendMyMessage();
+	void SendClientMessage();
+	void SendServerMessage();
+	afx_msg void OnBnClickedOk();					// 종료
+	afx_msg void OnRangeRadioGroup(UINT uID);		// 라디오버튼 클릭 함수
+	afx_msg void OnBnClickedButtonConnect();		// 연결 버튼 클릭 함수
+
+
+	CClientSocket* m_pClient;		// 클라이언트 소켓(실제 데이터 주고받음)
+	CServerSocket* m_pServer;		// 서버 소켓
+	CList<CChildSocket*> m_childs;	// 서버 자식 소켓(실제 데이터 주고받음)
+
+
+	CEdit m_IP;				// ip 입력창
+	CEdit m_port;			// port 입력창
+	CStatic m_staticIP;		// ip static
+	CStatic m_staticPort;	// port static
+
+	
+	BOOL m_isClient;		// 모드-TRUE:클라이언트, FALSE:서버
 };

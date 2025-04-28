@@ -36,6 +36,12 @@
     <ClInclude Include="ClientSocket.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="ServerSocket.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ChildSocket.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ChatClient.cpp">
@@ -48,6 +54,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="ClientSocket.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ServerSocket.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ChildSocket.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
