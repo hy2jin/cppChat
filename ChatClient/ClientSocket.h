@@ -12,6 +12,7 @@ public:
 
 	CChatClientDlg* m_pDlg;
 	void SetChatDlg(CChatClientDlg* pDlg);
+	virtual void OnConnect(int nErrorCode);
 };
 
 

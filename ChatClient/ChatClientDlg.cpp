@@ -316,11 +316,12 @@ void CChatClientDlg::OnBnClickedButtonConnect()
 			return;
 		}
 
+		CleanupClientSocket();
 		m_pClient = new CClientSocket();
 		m_pClient->SetChatDlg(this);
 
 		int iPort = _ttoi(inputPort);
-		m_pClient->Create(iPort);
+		m_pClient->Create();
 		m_pClient->Connect(inputIP, iPort);
 	}
 	else
@@ -331,6 +332,7 @@ void CChatClientDlg::OnBnClickedButtonConnect()
 			return;
 		}
 
+		CleanupServerSocket();
 		m_pServer = new CServerSocket();
 		m_pServer->SetChatDlg(this);
 
@@ -342,6 +344,7 @@ void CChatClientDlg::OnBnClickedButtonConnect()
 void CChatClientDlg::OnRangeRadioGroup(UINT uID)
 {
 	CheckRadioButton(IDC_RADIO1, IDC_RADIO2, uID);
+	m_ChatList.ResetContent();
 
 	if (uID == IDC_RADIO1)	// 클라이언트
 	{
