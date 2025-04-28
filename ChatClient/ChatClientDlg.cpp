@@ -253,6 +253,7 @@ void CChatClientDlg::SendMyMessage()
 
 void CChatClientDlg::AddChildSocket(CChildSocket* pChild)
 {
+	pChild->SetChatDlg(this);
 	m_childs.AddTail(pChild);
 }
 
