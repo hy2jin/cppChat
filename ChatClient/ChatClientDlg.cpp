@@ -54,6 +54,7 @@ CChatClientDlg::CChatClientDlg(CWnd* pParent /*=NULL*/)
 
 	m_isClient = TRUE;
 	m_pClient = nullptr;
+	m_pServer = nullptr;
 }
 
 void CChatClientDlg::DoDataExchange(CDataExchange* pDX)
@@ -191,7 +192,6 @@ BOOL CChatClientDlg::PreTranslateMessage(MSG* pMsg)
 
 void CChatClientDlg::AddStrToList(CString msg)	// 리스트에 추가하는 함수
 {
-	//m_ChatList.AddString(msg);
 	int cnt = m_ChatList.GetCount();
 	m_ChatList.InsertString(cnt, msg);
 }
@@ -204,7 +204,10 @@ void CChatClientDlg::SendMyMessage()
 	// 빈값 걸러내기
 	tempInput = tempInput.Trim();
 	if (tempInput.IsEmpty())
+	{
+		AfxMessageBox(_T("내용 없음"));
 		return;
+	}
 
 	// 한글 안깨지도록 변경
 	CStringA aMsg(tempInput);
@@ -228,7 +231,11 @@ void CChatClientDlg::SendMyMessage()
 			AfxMessageBox(_T("서버 소켓 없음"));
 			return;
 		}
-		
+		if (m_childs.GetCount() == 0)
+		{
+			AfxMessageBox(_T("연결된 소켓 없음"));
+		}
+
 		POSITION pos = m_childs.GetHeadPosition();
 		while (pos != nullptr)
 		{
@@ -240,17 +247,45 @@ void CChatClientDlg::SendMyMessage()
 
 
 	// 내 리스트레 추가하고 input창 비우기
-	AddStrToList(tempInput);
+	AddStrToList(_T("[나]: ") + tempInput);
 	m_ChatInput.SetWindowTextW(_T(""));
 }
 
-void CChatClientDlg::SendClientMessage()
+void CChatClientDlg::AddChildSocket(CChildSocket* pChild)
 {
-
+	m_childs.AddTail(pChild);
 }
 
-void CChatClientDlg::SendServerMessage()
+void CChatClientDlg::CleanupServerSocket()
 {
+	if (m_pServer)
+	{
+		m_pServer->Close();
+		delete m_pServer;
+		m_pServer = nullptr;
+	}
+
+	POSITION pos = m_childs.GetHeadPosition();
+	while (pos != nullptr)
+	{
+		CChildSocket* pChild = m_childs.GetNext(pos);
+		if (pChild)
+		{
+			pChild->Close();
+			delete pChild;
+		}
+		m_childs.RemoveAll();
+	}
+}
+
+void CChatClientDlg::CleanupClientSocket()
+{
+	if (m_pClient)
+	{
+		m_pClient->Close();
+		delete m_pClient;
+		m_pClient = nullptr;
+	}
 }
 
 
@@ -261,42 +296,45 @@ void CChatClientDlg::OnBnClickedOk()
 }
 
 
-void CChatClientDlg::OnBnClickedButtonConnect()	// 연결 버튼 누르면 호출되는 함수
+void CChatClientDlg::OnBnClickedButtonConnect()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	if (m_isClient)
-	{
-		// 서버소켓 확인, 닫기
-		// 자식소켓 확인, 닫기
+	// IP, Port 받아오기
+	CString inputIP, inputPort;
+	m_IP.GetWindowTextW(inputIP);
+	m_port.GetWindowTextW(inputPort);
+	inputIP = inputIP.Trim();
+	inputPort = inputPort.Trim();
 
-		// 1. IP, Port 받아오기
-		CString inputIP, inputPort;
-		m_IP.GetWindowTextW(inputIP);
-		m_port.GetWindowTextW(inputPort);
 	
-		// 1-1. 값 없으면 return
-		inputIP = inputIP.Trim();
-		inputPort = inputPort.Trim();
+	if (m_isClient)
+	{	
+		// 클라이언트는 IP, PORT 필요
 		if (inputIP.GetLength() == 0 || inputPort.IsEmpty())
 		{
 			return;
 		}
 
-		// 2. 소켓 Create
-		int iPort = _ttoi(inputPort);
 		m_pClient = new CClientSocket();
 		m_pClient->SetChatDlg(this);
-		m_pClient->Create(iPort);
 
-		// 3. IP, PORT 넣어서 Connect
-		if (m_pClient->Connect(inputIP, iPort) == 0)
+		int iPort = _ttoi(inputPort);
+		m_pClient->Create(iPort);
+		m_pClient->Connect(inputIP, iPort);
+	}
+	else
+	{
+		// 서버는 PORT 필요
+		if (inputPort.IsEmpty())
 		{
-			AfxMessageBox(_T("연결"));
+			return;
 		}
-		else
-		{
-			AfxMessageBox(_T("실패"));
-		}
+
+		m_pServer = new CServerSocket();
+		m_pServer->SetChatDlg(this);
+
+		m_pServer->Create(_ttoi(inputPort));
+		m_pServer->Listen();
 	}
 }
 
@@ -307,19 +345,19 @@ void CChatClientDlg::OnRangeRadioGroup(UINT uID)
 	if (uID == IDC_RADIO1)	// 클라이언트
 	{
 		m_isClient = TRUE;
-
 		m_staticIP.ShowWindow(SW_SHOW);
 		m_IP.ShowWindow(SW_SHOW);
 
 
+		CleanupServerSocket();
 	}
 	else if (uID == IDC_RADIO2)	// 서버
 	{
 		m_isClient = FALSE;
-
 		m_staticIP.ShowWindow(SW_HIDE);
 		m_IP.ShowWindow(SW_HIDE);
 
 
+		CleanupClientSocket();
 	}
 }

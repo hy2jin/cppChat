@@ -35,7 +35,7 @@ void CClientSocket::OnReceive(int nErrorCode)
 		CString msgStr(ansiStr);
 
 		TRACE(msgStr + _T("\n"));
-		m_pDlg->AddStrToList(msgStr);
+		m_pDlg->AddStrToList(_T("[³²] ") + msgStr);
 	}
 
 	CAsyncSocket::OnReceive(nErrorCode);
