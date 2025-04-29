@@ -43,7 +43,7 @@ public:
 	BOOL m_isClient;
 	CClientSocket* m_pClient;		// 클라이언트 소켓(실제 데이터 주고받음)
 	CServerSocket* m_pServer;		// 서버 소켓
-	CList<CClientSocket*> m_childs;	// 서버 자식 소켓(실제 데이터 주고받음)
+	CList<CChildSocket*> m_childs;	// 서버 자식 소켓(실제 데이터 주고받음)
 
 	void AddChildSocket(CChildSocket* pChild);		// 서버로 사용할 때 연결 추가
 	void CleanupClientSocket();						// 소켓 정리-클라이언트
