@@ -5,7 +5,7 @@
 #include "ChatClient.h"
 #include "ChatClientDlg.h"
 #include "ServerSocket.h"
-#include "ChildSocket.h"
+
 
 // CServerSocket
 

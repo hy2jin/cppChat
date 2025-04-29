@@ -34,32 +34,28 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 public:
-	CEdit m_IP;				// ip 입력창
-	CEdit m_port;			// port 입력창
-	CStatic m_staticIP;		// ip static
-	CStatic m_staticPort;	// port static
+	CListBox m_ChatList;
+	CEdit m_ChatInput;
+	CEdit m_IP;
+	CEdit m_port;
+	CStatic m_staticIP;
 
-	CListBox m_ChatList;	// 채팅 보이는 리스트
-	CEdit m_ChatInput;		// 채팅 입력창
-
+	BOOL m_isClient;
 	CClientSocket* m_pClient;		// 클라이언트 소켓(실제 데이터 주고받음)
 	CServerSocket* m_pServer;		// 서버 소켓
-	CList<CChildSocket*> m_childs;	// 서버 자식 소켓(실제 데이터 주고받음)
-
-	BOOL m_isClient;		// 모드-TRUE:클라이언트, FALSE:서버
-
-
-	void SendMyMessage();							// 메시지 보내는 함수
-	void AddStrToList(CString msg);					// 실제 리스트에 추가하는 함수
+	CList<CClientSocket*> m_childs;	// 서버 자식 소켓(실제 데이터 주고받음)
 
 	void AddChildSocket(CChildSocket* pChild);		// 서버로 사용할 때 연결 추가
-	void CleanupServerSocket();						// 소켓 정리-서버
 	void CleanupClientSocket();						// 소켓 정리-클라이언트
+	void CleanupServerSocket();						// 소켓 정리-서버
 
+	void AddStrToList(CString strMsg);
+	void SendMyMessage();							// 메시지 보내는 함수
 
-	virtual BOOL PreTranslateMessage(MSG* pMsg);	// 엔터키 변경
-	afx_msg void OnBnClickedButton1();				// 보내기 버튼 클릭
-	afx_msg void OnBnClickedOk();					// 종료
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	afx_msg void OnBnClickedButton1();
+	afx_msg void OnBnClickedButtonConnect();
 	afx_msg void OnRangeRadioGroup(UINT uID);		// 라디오버튼 클릭 함수
-	afx_msg void OnBnClickedButtonConnect();		// 연결 버튼 클릭 함수
+
+	afx_msg void OnBnClickedButtonClear();
 };

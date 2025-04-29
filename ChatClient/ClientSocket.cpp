@@ -27,40 +27,19 @@ void CClientSocket::OnReceive(int nErrorCode)
 	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
 	char cBuff[1024] = { 0 };
 	int nBytes = Receive(cBuff, sizeof(cBuff) - 1);
-	
+
 	if (nBytes > 0)
 	{
 		cBuff[nBytes] = '\0';
 		CStringA ansiStr(cBuff);
 		CString msgStr(ansiStr);
 
-		TRACE(msgStr + _T("\n"));
 		m_pDlg->AddStrToList(_T("[남]: ") + msgStr);
 	}
-
 	CAsyncSocket::OnReceive(nErrorCode);
 }
 
 void CClientSocket::SetChatDlg(CChatClientDlg* pDlg)
 {
 	m_pDlg = pDlg;
-}
-
-void CClientSocket::OnConnect(int nErrorCode)
-{
-	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
-	if (nErrorCode == 0)
-	{
-		AfxMessageBox(_T("연결 성공"));
-	}
-	else
-	{
-		int err = GetLastError();
-		CString strErr;
-		strErr.Format(_T("연결 실패 (에러코드: %d)"), err);
-		AfxMessageBox(strErr);
-
-		m_pDlg->CleanupClientSocket();
-	}
-	CAsyncSocket::OnConnect(nErrorCode);
 }

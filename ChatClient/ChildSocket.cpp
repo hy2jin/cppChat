@@ -34,20 +34,8 @@ void CChildSocket::OnReceive(int nErrorCode)
 		CStringA ansiStr(cBuff);
 		CString msgStr(ansiStr);
 
-		TRACE(msgStr + _T("\n"));
 		m_pDlg->AddStrToList(_T("[남]: ") + msgStr);
 	}
-	else if (nBytes == 0)
-	{
-		AfxMessageBox(_T("상대방과 연결 끊어짐"));
-		Close();
-	}
-	else
-	{
-		AfxMessageBox(_T("데이터 수신 에러"));
-		Close();
-	}
-
 	CAsyncSocket::OnReceive(nErrorCode);
 }
 
